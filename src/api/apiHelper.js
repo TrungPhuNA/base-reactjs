@@ -30,6 +30,7 @@ api.interceptors.response.use(
     (error) => {
         if (error.response && error.response.status === 401) {
             localStorage.removeItem('token');
+            console.info("===========[] ===========[window.location.href LOGIN] : ");
             window.location.href = '/login';
         }
         return Promise.reject(error);

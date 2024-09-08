@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link, useParams} from 'react-router-dom';
 import {Container, Row, Col, Card, Dropdown, Pagination, Nav, Button} from 'react-bootstrap';
-import './Category.css';
+import './style/Category.css';
 import './../components/product/ProductCarousel.css';
 
 const categories = [

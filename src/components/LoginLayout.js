@@ -5,7 +5,7 @@ import { Container } from 'react-bootstrap';
 
 const LoginLayout = () => {
     return (
-        <Container>
+        <Container fluid>
             <Outlet />
         </Container>
     );

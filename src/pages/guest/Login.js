@@ -1,76 +1,101 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Container, Row, Col, Card, Button, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Button, Alert } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import apiHelper from '../../api/apiHelper';
+import './style/Login.css';
+import { loginUser } from "../../redux/slices/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {unwrapResult} from "@reduxjs/toolkit";
 
-const Login = ({ onLogin }) => {
+const Login = () => {
     const initialValues = {
         email: '',
         password: ''
     };
 
-    const [error, setError] = useState('');
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { loading, error, isAuthenticated } = useSelector((state) => state.auth); // Add isAuthenticated
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/'); // Điều hướng chỉ khi isAuthenticated là true
+        }
+    }, [isAuthenticated, navigate]);
 
     const validationSchema = Yup.object({
         email: Yup.string().email('Invalid email format').required('Required'),
         password: Yup.string().min(6, 'Password must be at least 6 characters').required('Required')
     });
 
-    const onSubmit = async (values, { setSubmitting, setErrors }) => {
+    const onSubmit = async (values, { setSubmitting }) => {
         try {
-            const response = await apiHelper.post('/auth/login', values);
-            if(response.status === "success") {
-                onLogin(response.data.user, response.data.token);
-                navigate('/'); // Redirect to home or dashboard
-            }else {
-                setError(response.data.message);
+            const result = await dispatch(loginUser(values));
+            if (loginUser.fulfilled.match(result)) {
+                let response = await unwrapResult(result);
+                console.info("===========[userLogin] ===========[response] : ",response.user.role);
+                // setSubmitting(false); // Stop submission
+                if(response.user.role === 'admin') {
+                    // window.location.href = '/admin';
+                    navigate('/admin');
+                }else {
+                    // window.location.href = '/';
+                    navigate('/');
+                }
+                return true;
             }
         } catch (err) {
-            setError('Login failed. Please check your credentials.');
             setSubmitting(false);
         }
     };
 
     return (
-        <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '100vh' }}>
-            <Row className="w-100" style={{ maxWidth: '400px' }}>
-                <Col>
-                    <Card>
-                        <Card.Body>
-                            <h2 className="text-center mb-4">Login</h2>
-                            {error && <Alert variant="danger">{error}</Alert>}
-                            <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
-                                {({ isSubmitting }) => (
-                                    <Form>
-                                        <div className="mb-3">
-                                            <label htmlFor="email">Email</label>
-                                            <Field name="email" type="email" className="form-control" />
-                                            <ErrorMessage name="email" component="div" className="text-danger" />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="password">Password</label>
-                                            <Field name="password" type="password" className="form-control" />
-                                            <ErrorMessage name="password" component="div" className="text-danger" />
-                                        </div>
-                                        <Button type="submit" className="w-100" disabled={isSubmitting}>
-                                            Login
-                                        </Button>
-                                    </Form>
-                                )}
-                            </Formik>
-                        </Card.Body>
-                    </Card>
-                    <div className="w-100 text-center mt-2">
-                        Need an account? <Link to="/register">Register</Link>
-                    </div>
-                </Col>
-            </Row>
-        </Container>
+        <Row className="no-gutter">
+            <Col className="col-md-6 d-none d-md-flex bg-image"></Col>
+            <Col className="col-md-6 bg-light">
+                <div className="login d-flex align-items-center py-5">
+                    <Container>
+                        <Row>
+                            <Col lg={12} xl={8} className="mx-auto">
+                                <h4 className="display-6">Đăng nhập hệ thống</h4>
+                                <p className="text-muted mb-4">Xin vui lòng điền đẩy đủ thông tin</p>
+                                {error && <Alert variant="danger">{error}</Alert>}
+                                <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
+                                    {({ isSubmitting }) => (
+                                        <Form>
+                                            <div className="mb-3">
+                                                <label htmlFor="email">Email</label>
+                                                <Field name="email" type="email" className="form-control" />
+                                                <ErrorMessage name="email" component="div" className="text-danger" />
+                                            </div>
+                                            <div className="mb-3">
+                                                <label htmlFor="password">Password</label>
+                                                <Field name="password" type="password" className="form-control" />
+                                                <ErrorMessage name="password" component="div" className="text-danger" />
+                                            </div>
+                                            <Button type="submit" className="w-100" disabled={isSubmitting || loading}>
+                                                {loading ? 'Logging in...' : 'Login'}
+                                            </Button>
+                                            <div className="text-center d-flex justify-content-between mt-4">
+                                                <p>Bạn chưa có tài khoản? Đăng ký <Link to={'/register'} className="font-italic text-muted">
+                                                    <u>tại đây</u></Link>
+                                                </p>
+                                                <Link to={'/'} className="font-italic text-danger">Trang chủ</Link>
+                                            </div>
+                                            <div className="text-center d-flex justify-content-between mt-4">
+                                                <p>Code by <Link to={'/'} className="font-italic text-muted"><u>Phuphan</u></Link></p>
+                                            </div>
+                                        </Form>
+                                    )}
+                                </Formik>
+                            </Col>
+                        </Row>
+                    </Container>
+                </div>
+            </Col>
+        </Row>
     );
 };
 
 export default Login;
-
