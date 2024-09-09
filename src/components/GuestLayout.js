@@ -111,7 +111,7 @@ const GuestLayout = () => {
                                         alt="Avatar"
                                         style={{ width: 30, height: 30, borderRadius: '50%', marginRight: 10 }}
                                     />
-                                    {user.name}
+                                    {user?.name}
                                 </Dropdown.Toggle>
 
                                 <Dropdown.Menu>
