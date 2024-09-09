@@ -7,6 +7,8 @@ import './style/Login.css';
 import { loginUser } from "../../redux/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {unwrapResult} from "@reduxjs/toolkit";
+import bgImage from '../../assets/images/bg-login.jpg';
+import toastr from 'toastr';
 
 const Login = () => {
     const initialValues = {
@@ -32,10 +34,10 @@ const Login = () => {
     const onSubmit = async (values, { setSubmitting }) => {
         try {
             const result = await dispatch(loginUser(values));
+            console.info("===========[userLogin] ===========[response] : ",result);
             if (loginUser.fulfilled.match(result)) {
                 let response = await unwrapResult(result);
-                console.info("===========[userLogin] ===========[response] : ",response.user.role);
-                // setSubmitting(false); // Stop submission
+                console.info("===========[userLogin] ===========[response math] : ",response);
                 if(response.user.role === 'admin') {
                     // window.location.href = '/admin';
                     navigate('/admin');
@@ -44,15 +46,22 @@ const Login = () => {
                     navigate('/');
                 }
                 return true;
+            }else {
+                console.info("===========[] ===========[FAIL ROI] : ");
+                // toastr.error('Sai thông tin hoạc tài khoản không hợp lệ', 'Error');
+                setSubmitting(false);
+                return true;
             }
         } catch (err) {
+            console.info("===========[err] ===========[FAIL ROI] : ");
+            toastr.error('Sai thông tin hoạc tài khoản không hợp lệ', 'Error');
             setSubmitting(false);
         }
     };
 
     return (
         <Row className="no-gutter">
-            <Col className="col-md-6 d-none d-md-flex bg-image"></Col>
+            <Col className="col-md-6 d-none d-md-flex bg-image" style={{ backgroundImage: `url(${bgImage})` }}></Col>
             <Col className="col-md-6 bg-light">
                 <div className="login d-flex align-items-center py-5">
                     <Container>

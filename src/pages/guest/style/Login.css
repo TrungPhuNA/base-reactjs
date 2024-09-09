@@ -22,8 +22,7 @@
 }
 
 .bg-image {
-    background-image: url('https://www.petstation.vn/thumb/1366x660/1/upload/hinhanh/mo-hinh-giay-bang-tam-trang-len-y-tuong-thuyet-trinh-0242.png');
-    /*background-image: url('https://therichpost.com/wp-content/uploads/2021/02/login-split.jpg');*/
+    /*background-image: url('/images/bg-login.jpg');*/
     background-size: cover;
     background-position: center center;
 }

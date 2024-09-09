@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import './style/Login.css';
 import { useDispatch, useSelector } from 'react-redux';
 import {registerUser} from "../../redux/slices/authSlice";
+import bgImage from "../../assets/images/bg-login.jpg";
+import toastr from 'toastr';
 
 const Register = () => {
     const initialValues = {
@@ -30,21 +32,20 @@ const Register = () => {
     });
 
     const onSubmit = async (values, { setSubmitting, setErrors }) => {
-        console.info("===========[] ===========[values] : ", values);
         const result = await dispatch(registerUser(values));
         if (registerUser.fulfilled.match(result)) {
-            console.info("===========[register] ===========[success] : ", result);
+            toastr.success('Đăng ký thành công, xin vui lòng đăng nhập hệ thống', 'Success');
             navigate('/login');
         } else {
-            console.error("===========[register] ===========[failed] : ", result);
             setErrors({ submit: "Đăng ký thất bại, vui lòng thử lại." });
+            toastr.error('Đăng ký thất bại, thông tin đăng ký không hợp lệ', 'Error');
         }
         setSubmitting(false);
     };
 
     return (
         <Row className="no-gutter">
-            <Row className="col-md-6 d-none d-md-flex bg-image"></Row>
+            <Col className="col-md-6 d-none d-md-flex bg-image" style={{ backgroundImage: `url(${bgImage})` }}></Col>
             <Row className="col-md-6 bg-light">
                 <div className="login d-flex align-items-center py-5">
                     <Container className="container">

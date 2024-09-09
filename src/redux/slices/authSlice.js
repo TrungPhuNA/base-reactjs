@@ -87,14 +87,13 @@ const authSlice = createSlice({
                 state.error = null;
             })
             .addCase(registerUser.fulfilled, (state, { payload }) => {
-                state.token = payload.token;
-                state.isAuthenticated = true;
                 state.loading = false;
                 state.error = null;
             })
             .addCase(registerUser.rejected, (state, { payload }) => {
                 state.loading = false;
-                state.error = payload;
+                state.error = payload?.message;
+                // state.error = payload;
             })
             .addCase(loginUser.pending, (state) => {
                 state.loading = true;
@@ -116,7 +115,7 @@ const authSlice = createSlice({
             })
             .addCase(loginUser.rejected, (state, { payload }) => {
                 state.loading = false;
-                state.error = payload;
+                state.error = payload?.message;
             })
             .addCase(uploadAvatar.pending, (state) => {
                 state.loading = true;

@@ -1,6 +1,7 @@
 import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'toastr/build/toastr.min.css';
 import './App.css';
 import GuestLayout from './components/GuestLayout';
 import LoginLayout from './components/LoginLayout';
