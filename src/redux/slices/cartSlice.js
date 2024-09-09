@@ -13,7 +13,6 @@ const loadCartFromLocalStorage = () => {
             return initialState;
         }
         const parsedCart = JSON.parse(serializedCart);
-        // Đảm bảo parsedCart.items luôn là một mảng
         return {
             ...parsedCart,
             items: Array.isArray(parsedCart.items) ? parsedCart.items : [],
@@ -38,24 +37,30 @@ const cartSlice = createSlice({
     initialState: loadCartFromLocalStorage(),
     reducers: {
         addToCart: (state, action) => {
-            // Đảm bảo state.items luôn là một mảng
             state.items = state.items || [];
-            const existingProductIndex = state.items.findIndex(item => item.id === action.payload.id);
+            const existingProductIndex = state.items.findIndex(item => item._id === action.payload._id);
+
             if (existingProductIndex >= 0) {
+                // Nếu sản phẩm đã tồn tại, tăng số lượng
                 state.items[existingProductIndex].quantity += action.payload.quantity;
             } else {
+                // Nếu sản phẩm chưa tồn tại, thêm vào mảng items
                 state.items.push({ ...action.payload, quantity: action.payload.quantity });
             }
-            state.itemCount += action.payload.quantity;
 
-            // Lưu trạng thái giỏ hàng vào localStorage sau mỗi thay đổi
+            // Tính lại itemCount bằng cách tính tổng số lượng các sản phẩm trong giỏ hàng
+            state.itemCount = state.items.reduce((count, item) => count + item.quantity, 0);
+
+            // Lưu trạng thái giỏ hàng vào localStorage
             saveCartToLocalStorage(state);
         },
         removeFromCart: (state, action) => {
             state.items = state.items || [];
-            const updatedItems = state.items.filter(item => item.id !== action.payload.id);
-            state.itemCount -= action.payload.quantity;
+            const updatedItems = state.items.filter(item => item._id !== action.payload._id);
             state.items = updatedItems;
+
+            // Tính lại itemCount sau khi xóa sản phẩm
+            state.itemCount = state.items.reduce((count, item) => count + item.quantity, 0);
 
             saveCartToLocalStorage(state);
         },
@@ -65,8 +70,14 @@ const cartSlice = createSlice({
 
             saveCartToLocalStorage(state);
         },
+        setAllCart: (state, action) => {
+            console.info("===========[] ===========[action.payload] : ", action.payload);
+            // state.items = action.payload;
+            let items =  action.payload || [];
+            state.itemCount = items.reduce((count, item) => count + item.quantity, 0);
+        },
     },
 });
 
-export const { addToCart, removeFromCart, clearCart } = cartSlice.actions;
+export const { addToCart, removeFromCart, clearCart, setAllCart } = cartSlice.actions;
 export default cartSlice.reducer;

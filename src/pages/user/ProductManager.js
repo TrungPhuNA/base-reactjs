@@ -16,7 +16,7 @@ import DeleteConfirmationModal from './components/product/ProductDeleteConfirmat
 
 const ProductManager = () => {
     const [products, setProducts] = useState([]);
-    const [meta, setMeta] = useState({ total: 0, total_page: 1, page: 1, page_size: 10 });
+    const [meta, setMeta] = useState({ total: 0, total_page: 1, page: 1, page_size: 8 });
     const [editingProduct, setEditingProduct] = useState(null);
     const [showProductModal, setShowProductModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -110,8 +110,8 @@ const ProductManager = () => {
     const openProductModal = (product = null) => {
         setEditingProduct(product);
         setShowProductModal(true);
-        setProductImage(product?.image || null);
-        setDescription(product?.description || '');
+        setProductImage(product?.avatar || null);
+        setDescription(product?.content || '');
     };
 
     const handleImageChange = async (e) => {

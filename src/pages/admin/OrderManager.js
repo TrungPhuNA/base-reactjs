@@ -86,7 +86,12 @@ const OrderManager = () => {
                                 <td onClick={() => handleOrderClick(order)}>{order.guestInfo?.phone}</td>
                                 <td onClick={() => handleOrderClick(order)}>{formatCurrency(order.totalAmount)}</td>
                                 <td>
-                                    <UpdateOrderStatus orderId={order._id} currentStatus={order.status} />
+                                    {order.status !== 'completed' && (
+                                        <UpdateOrderStatus orderId={order._id} currentStatus={order.status} />
+                                    )}
+                                    {order.status === 'completed' && (
+                                        <span className={'btn btn-sm btn-success'}>completed</span>
+                                    )}
                                 </td>
                                 <td>
                                     <Dropdown as={ButtonGroup}>

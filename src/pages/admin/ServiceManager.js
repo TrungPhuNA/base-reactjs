@@ -15,7 +15,7 @@ const ServiceManager = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [serviceToDelete, setServiceToDelete] = useState(null);
     const [showSearchModal, setShowSearchModal] = useState(false);
-
+    const user = JSON.parse(localStorage.getItem('user'));
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
 
@@ -105,6 +105,7 @@ const ServiceManager = () => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
     };
 
+
     return (
         <Container>
             <Row className="gutters mt-3">
@@ -128,9 +129,11 @@ const ServiceManager = () => {
                             <Button variant="secondary" className="me-2" onClick={() => setShowSearchModal(true)}>
                                 Search
                             </Button>
-                            <Button variant="primary" onClick={() => openServiceModal(null)}>
-                                Add New Service
-                            </Button>
+                            {user.role === 'admin' && (
+                                <Button variant="primary" onClick={() => openServiceModal(null)}>
+                                    Add New Service
+                                </Button>
+                            )}
                         </div>
                     </div>
 
@@ -140,6 +143,7 @@ const ServiceManager = () => {
                         openServiceModal={openServiceModal}
                         setServiceToDelete={setServiceToDelete}
                         setShowDeleteModal={setShowDeleteModal}
+                        user={user}
                     />
 
                     <Pagination>

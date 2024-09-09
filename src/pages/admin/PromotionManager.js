@@ -38,6 +38,7 @@ const PromotionManager = () => {
 
     const handleAddEditPromotion = async (values) => {
         try {
+            console.info("===========[] ===========[Click] : ");
             if (editingPromotion) {
                 const response = await promotionService.update(editingPromotion._id, values);
                 setPromotions((prevPromotions) =>

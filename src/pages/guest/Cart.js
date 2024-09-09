@@ -2,10 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Button, Table, Form, Modal } from 'react-bootstrap';
 import apiOrderService from "./../../api/apiOrderService";
+import {addToCart, setAllCart} from "../../redux/slices/cartSlice";
+import {useDispatch} from "react-redux";
 
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
+    const [itemCount, setItemCount] = useState(0); // Thêm state cho itemCount
     const [showCheckout, setShowCheckout] = useState(false);
+    const dispatch = useDispatch();
     const [userInfo, setUserInfo] = useState({
         name: '',
         phone: '',
@@ -20,6 +24,7 @@ const Cart = () => {
                 const parsedCart = JSON.parse(savedCart);
                 if (parsedCart && Array.isArray(parsedCart.items)) {
                     setCartItems(parsedCart.items);
+                    setItemCount(parsedCart.itemCount || 0); // Cập nhật itemCount từ localStorage
                 } else {
                     console.error("Giỏ hàng không có items hợp lệ", parsedCart);
                 }
@@ -29,26 +34,35 @@ const Cart = () => {
         }
     }, []);
 
-    useEffect(() => {
-        if (cartItems.length > 0) {
-            const updatedCart = {
-                items: cartItems,
-                itemCount: cartItems.reduce((count, item) => count + item.quantity, 0)
-            };
-            localStorage.setItem('cart', JSON.stringify(updatedCart));
-        }
-    }, [cartItems]);
+    // Hàm cập nhật giỏ hàng vào localStorage
+    const updateCartInLocalStorage = (items) => {
+        const updatedCart = {
+            items,
+            itemCount: items.reduce((count, item) => count + item.quantity, 0) // Tính lại itemCount
+        };
+        setItemCount(updatedCart.itemCount); // Cập nhật itemCount trong state
+        dispatch(setAllCart(items));
+        localStorage.setItem('cart', JSON.stringify(updatedCart));
+    };
 
     const handleQuantityChange = (id, quantity) => {
-        setCartItems((prevItems) =>
-            prevItems.map((item) =>
+        setCartItems((prevItems) => {
+            const updatedItems = prevItems.map((item) =>
                 item._id === id ? { ...item, quantity: Math.max(1, quantity) } : item
-            )
-        );
+            );
+            dispatch(setAllCart(updatedItems));
+            // dispatch(addToCart({ ...updatedItems, quantity: 1 }));  // Thêm 1 sản phẩm vào giỏ hàng
+            updateCartInLocalStorage(updatedItems); // Cập nhật localStorage ngay lập tức
+            return updatedItems;
+        });
     };
 
     const handleRemoveItem = (id) => {
-        setCartItems((prevItems) => prevItems.filter((item) => item._id !== id));
+        setCartItems((prevItems) => {
+            const updatedItems = prevItems.filter((item) => item._id !== id);
+            updateCartInLocalStorage(updatedItems); // Cập nhật localStorage ngay lập tức
+            return updatedItems;
+        });
     };
 
     const getTotalPrice = () => {
@@ -80,7 +94,7 @@ const Cart = () => {
             };
 
             const response = await apiOrderService.add(orderData);
-            console.info("===========[] ===========[createOrder] : ",response);
+            console.info("===========[] ===========[createOrder] : ", response);
 
             // Xóa giỏ hàng sau khi thanh toán thành công
             setCartItems([]);
@@ -140,6 +154,7 @@ const Cart = () => {
                 </tbody>
             </Table>
             <h4 className="text-end">Tổng tiền: {getTotalPrice().toLocaleString('vi-VN')} vnđ</h4>
+            <h5 className="text-end">Số lượng sản phẩm: {itemCount}</h5> {/* Hiển thị itemCount */}
             <div className="d-flex justify-content-between mt-3">
                 <Button variant="primary">Tiếp tục mua sắm</Button>
                 {cartItems.length > 0 && (

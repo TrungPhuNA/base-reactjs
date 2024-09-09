@@ -39,7 +39,7 @@ const Login = () => {
             if (loginUser.fulfilled.match(result)) {
                 let response = await unwrapResult(result);
                 console.info("===========[userLogin] ===========[response math] : ",response);
-                if(response.user.role === 'admin') {
+                if(response.user.role === 'admin' || response.user.role === 'staff') {
                     // window.location.href = '/admin';
                     navigate('/admin');
                 }else {

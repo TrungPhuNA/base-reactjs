@@ -8,6 +8,7 @@ import * as Yup from 'yup';
 import './style/Profile.css';
 import {updateUserProfile, uploadAvatar} from "../../redux/slices/authSlice";
 import {unwrapResult} from "@reduxjs/toolkit";
+import toastr from 'toastr';
 
 const Profile = () => {
     const dispatch = useDispatch();
@@ -33,7 +34,13 @@ const Profile = () => {
     const validationSchema = Yup.object().shape({
         name: Yup.string().required('Name is required'),
         email: Yup.string().email('Invalid email').required('Email is required'),
-        newPassword: Yup.string().min(6, 'Password must be at least 6 characters long').nullable(),
+        // newPassword: Yup.string().min(6, 'Password must be at least 6 characters long').nullable(),
+        newPassword: Yup.string()
+            .min(6, 'Password must be at least 6 characters')
+            .matches(/[a-z]/, 'Password must contain at least one lowercase letter')  // Kiểm tra có ít nhất 1 chữ thường
+            .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')  // Kiểm tra có ít nhất 1 chữ in hoa
+            .matches(/\d/, 'Password must contain at least one number').nullable(),        // Kiểm tra có ít nhất 1 số
+            // .required('Required'),
         confirmPassword: Yup.string().oneOf([Yup.ref('newPassword'), null], 'Passwords must match').nullable(),
     });
 
@@ -65,7 +72,7 @@ const Profile = () => {
                                 <div className="user-profile">
                                     <div className="user-avatar position-relative">
                                         <img src={avatarPreview || "https://via.placeholder.com/150"} alt="Avatar"
-                                             className="avatar-img"/>
+                                             className="avatar-img avatar-profile-img"/>
                                         <input type="file" id="avatarUpload" style={{display: 'none'}}
                                                onChange={handleAvatarChange}/>
                                         <label htmlFor="avatarUpload" className="avatar-upload-label">
@@ -75,13 +82,13 @@ const Profile = () => {
                                     <h5 className="user-name">{user?.name || 'User Name'}</h5>
                                     <h6 className="user-email">{user?.email || 'user@example.com'}</h6>
                                 </div>
-                                <div className="about">
-                                    <h5>About</h5>
-                                    <p>
-                                        I'm {user?.name}. Full Stack Designer I enjoy creating user-centric, delightful
-                                        and human experiences.
-                                    </p>
-                                </div>
+                                {/*<div className="about">*/}
+                                {/*    <h5>About</h5>*/}
+                                {/*    <p>*/}
+                                {/*        I'm {user?.name}. Full Stack Designer I enjoy creating user-centric, delightful*/}
+                                {/*        and human experiences.*/}
+                                {/*    </p>*/}
+                                {/*</div>*/}
                             </div>
                         </Card.Body>
                     </Card>
@@ -99,9 +106,24 @@ const Profile = () => {
                                     confirmPassword: '',
                                 }}
                                 validationSchema={validationSchema}
-                                onSubmit={(values, {setSubmitting}) => {
-                                    dispatch(updateUserProfile(values));
+                                onSubmit={async (values, {setSubmitting}) => {
+                                    try {
+                                        // Gọi hành động updateUserProfile và đợi phản hồi
+                                        const result = await dispatch(updateUserProfile({
+                                            ...values,
+                                            avatar: avatarPreview
+                                        })).unwrap();
+                                        toastr.success('Cập nhật thành công', 'Success');
+                                        // setErrorMessage(null);
+                                    } catch (error) {
+                                        toastr.error('Cập nhật thất bại', 'Error');
+                                        // setSuccessMessage(null); // Reset thông báo thành công nếu có
+                                    }
+
                                     setSubmitting(false);
+
+                                    // dispatch(updateUserProfile({...values, avatar: avatarPreview}));
+                                    // setSubmitting(false);
                                 }}
                             >
                                 {({

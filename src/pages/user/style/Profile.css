@@ -12,6 +12,13 @@
     object-fit: cover;
 }
 
+.avatar-profile-img {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
 .avatar-upload-label {
     position: absolute;
     bottom: 30px;

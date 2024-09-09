@@ -16,8 +16,9 @@ const PromotionFormModal = ({
                             }) => {
     const dispatch = useDispatch();
     const [imagePreview, setImagePreview] = useState(editingPromotion?.programImage || '');
-    const [uploading, setUploading] = useState(false); // New state for uploading
+    const [uploading, setUploading] = useState(false); // State cho việc upload
 
+    // Schema validation với Yup
     const validationSchema = Yup.object().shape({
         code: Yup.string().required('Code is required'),
         programName: Yup.string().required('Program Name is required'),
@@ -37,16 +38,18 @@ const PromotionFormModal = ({
         programImage: Yup.string().required('Program Image is required'),
     });
 
+    // Định dạng ngày
     const formatDateForInput = (date) => {
         if (!date) return '';
         const d = new Date(date);
         return d.toISOString().split('T')[0]; // Format yyyy-MM-dd
     };
 
+    // Xử lý sự kiện thay đổi ảnh
     const handleImageChange = async (e, setFieldValue) => {
         const file = e.target.files[0];
         if (file) {
-            setUploading(true); // Start uploading
+            setUploading(true); // Bắt đầu tải lên ảnh
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImagePreview(reader.result);
@@ -57,9 +60,9 @@ const PromotionFormModal = ({
             if (uploadAvatar.fulfilled.match(response)) {
                 const url = response.payload;
                 setImagePreview(url);
-                setFieldValue('programImage', url);
+                setFieldValue('programImage', url); // Cập nhật giá trị ảnh trong Formik
             }
-            setUploading(false); // End uploading
+            setUploading(false); // Kết thúc tải lên
         }
     };
 
@@ -121,10 +124,9 @@ const PromotionFormModal = ({
                                     }}
                                     validationSchema={validationSchema}
                                     onSubmit={(values, { setSubmitting }) => {
-                                        // Thêm console.log để kiểm tra giá trị trước khi submit
-                                        console.log("Submitting values: ", values);
-                                        handleAddEditPromotion(values);
-                                        setSubmitting(false);
+                                        console.log("Submitting values: ", values); // Kiểm tra giá trị trước khi submit
+                                        handleAddEditPromotion(values); // Gọi hàm xử lý submit
+                                        setSubmitting(false); // Đặt trạng thái submitting về false
                                     }}
                                 >
                                     {({

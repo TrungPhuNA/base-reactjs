@@ -3,7 +3,8 @@ import { Table, Dropdown, ButtonGroup, Badge } from 'react-bootstrap';
 import { FaListUl, FaStar } from "react-icons/fa";
 import {stripHtmlTags} from "../../../../helpers/formatters";
 
-const ServiceTable = ({ services, formatCurrency, openServiceModal, setServiceToDelete, setShowDeleteModal }) => {
+const ServiceTable = ({ services, formatCurrency, openServiceModal, setServiceToDelete, setShowDeleteModal, user }) => {
+
     return (
         <Table striped bordered hover responsive className="mt-3">
             <thead>
@@ -47,18 +48,20 @@ const ServiceTable = ({ services, formatCurrency, openServiceModal, setServiceTo
                         </div>
                     </td>
                     <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
-                        <Dropdown as={ButtonGroup}>
-                            <Dropdown.Toggle variant="link" id="dropdown-basic">
-                                <FaListUl />
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu>
-                                <Dropdown.Item onClick={() => openServiceModal(service)}>Edit</Dropdown.Item>
-                                <Dropdown.Item onClick={() => {
-                                    setServiceToDelete(service);
-                                    setShowDeleteModal(true);
-                                }}>Delete</Dropdown.Item>
-                            </Dropdown.Menu>
-                        </Dropdown>
+                        {user.role === 'admin' && (
+                            <Dropdown as={ButtonGroup}>
+                                <Dropdown.Toggle variant="link" id="dropdown-basic">
+                                    <FaListUl />
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu>
+                                    <Dropdown.Item onClick={() => openServiceModal(service)}>Edit</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => {
+                                        setServiceToDelete(service);
+                                        setShowDeleteModal(true);
+                                    }}>Delete</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        )}
                     </td>
                 </tr>
             ))}

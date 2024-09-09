@@ -32,6 +32,7 @@ const AdminRoutes = () => {
     }
 
     if (user.role !== 'admin' && user.role !== 'staff') {
+        console.info("===========[] ===========[VAO DAY ROI] : ");
         return <Navigate to="/unauthorized" />; // Redirect to an unauthorized page if neither admin nor staff
     }
 
@@ -56,11 +57,11 @@ const AdminRoutes = () => {
                         {/* Add other admin-only routes here */}
                     </>
                 )}
-
+                <Route index element={<AdminDashboard />} />
                 {/* Staff trying to access admin-only routes should be redirected */}
-                {user.role === 'staff' && (
-                    <Route path="*" element={<Navigate to="/unauthorized" />} />
-                )}
+                {/*{user.role === 'staff' && (*/}
+                {/*    <Route path="*" element={<Navigate to="/unauthorized" />} />*/}
+                {/*)}*/}
             </Route>
         </Routes>
     );

@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import {Container, Row, Col, Button, Table, Breadcrumb, Nav, ButtonGroup, Dropdown, Badge} from 'react-bootstrap';
+import {
+    Container,
+    Row,
+    Col,
+    Button,
+    Table,
+    Breadcrumb,
+    Nav,
+    ButtonGroup,
+    Dropdown,
+    Badge,
+    Pagination
+} from 'react-bootstrap';
 import appointmentService from './../../api/appointmentService';
 import { Link } from "react-router-dom";
 import moment from "moment/moment";
@@ -7,19 +19,29 @@ import {FaListUl} from "react-icons/fa";
 
 const AppointmentManager = () => {
     const [appointments, setAppointments] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
+    const [totalPages, setTotalPages] = useState(1); // Tổng số trang
+    const [filters, setFilters] = useState({});
 
-    const fetchAppointments = async () => {
+    const fetchAppointments = async (page = 1) => {
         try {
-            const response = await appointmentService.getAppointmentsAdmin();
-            setAppointments(response.data.appointments); // Cập nhật để lấy dữ liệu từ `response.data.data.appointments`
+            // Tạo object params, bao gồm trang hiện tại và các bộ lọc khác nếu có
+            const params = {
+                page,
+                ...filters, // Bao gồm tất cả các filters hiện tại (nếu có)
+            };
+
+            const response = await appointmentService.getAppointmentsAdmin(params); // Gửi params đến API
+            setAppointments(response.data.appointments); // Cập nhật danh sách cuộc hẹn
+            setTotalPages(response.data.meta.total_page); // Cập nhật tổng số trang từ meta
         } catch (error) {
             console.error("Error fetching appointments:", error);
         }
     };
 
     useEffect(() => {
-        fetchAppointments();
-    }, []);
+        fetchAppointments(currentPage); // Gọi API khi currentPage thay đổi
+    }, [currentPage]);
 
     const handleConfirm = async (id) => {
         try {
@@ -71,6 +93,10 @@ const AppointmentManager = () => {
             default:
                 return 'secondary';
         }
+    };
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
     };
 
     return (
@@ -140,6 +166,22 @@ const AppointmentManager = () => {
                         ))}
                         </tbody>
                     </Table>
+                    {/* Bộ phân trang */}
+                    <Pagination>
+                        <Pagination.First onClick={() => handlePageChange(1)} disabled={currentPage === 1} />
+                        <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
+                        {[...Array(totalPages)].map((_, idx) => (
+                            <Pagination.Item
+                                key={idx + 1}
+                                active={currentPage === idx + 1}
+                                onClick={() => handlePageChange(idx + 1)}
+                            >
+                                {idx + 1}
+                            </Pagination.Item>
+                        ))}
+                        <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} />
+                        <Pagination.Last onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages} />
+                    </Pagination>
                 </Col>
             </Row>
         </Container>

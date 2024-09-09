@@ -60,7 +60,7 @@ const BoardingModal = ({ show, handleClose, API, setSuccessMessage }) => {
                 totalPrice: totalPrice // Gửi tổng tiền lên server
             };
             const response = await boardingApi.add(data);
-            toastr.success('Đặt lịch thành công!', 'Success');
+            toastr.success('Ký gủi pet thành công!', 'Success');
             handleClose();
             resetForm();
         } catch (error) {

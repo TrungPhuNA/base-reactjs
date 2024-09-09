@@ -53,6 +53,7 @@ export const loadUserFromLocalStorage = createAsyncThunk('auth/loadUserFromLocal
 // Thunk để cập nhật thông tin người dùng
 export const updateUserProfile = createAsyncThunk('user/profile', async (userData, { rejectWithValue }) => {
     try {
+        console.info("===========[] ===========[updateUserProfile] : ",userData);
         const response = await apiHelper.put('user/profile', userData);
         return response.data;
     } catch (err) {
