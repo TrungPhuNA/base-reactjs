@@ -5,6 +5,7 @@ import { Formik } from "formik";
 import * as Yup from 'yup';
 import petService from './../../api/petService';
 import boardingApi from './../../api/boardingApi';
+import toastr from "toastr";
 
 const BoardingModal = ({ show, handleClose, API, setSuccessMessage }) => {
     const [pets, setPets] = useState([]);
@@ -59,10 +60,11 @@ const BoardingModal = ({ show, handleClose, API, setSuccessMessage }) => {
                 totalPrice: totalPrice // Gửi tổng tiền lên server
             };
             const response = await boardingApi.add(data);
-            setSuccessMessage('Ký gửi thành công!');
+            toastr.success('Đặt lịch thành công!', 'Success');
             handleClose();
             resetForm();
         } catch (error) {
+            toastr.error('Có lỗi xẩy ra, xin vui lòng thử lại', 'Error');
             console.error("There was an error creating the boarding!", error);
         } finally {
             setSubmitting(false);
@@ -107,7 +109,7 @@ const BoardingModal = ({ show, handleClose, API, setSuccessMessage }) => {
                           setFieldValue,
                       }) => (
                         <Form onSubmit={handleSubmit}>
-                            <Form.Group controlId="petId">
+                            <Form.Group controlId="petId" className={'mb-2'}>
                                 <Form.Label>Chọn thú cưng</Form.Label>
                                 <Form.Control
                                     as="select"
@@ -127,7 +129,7 @@ const BoardingModal = ({ show, handleClose, API, setSuccessMessage }) => {
                                 </Form.Control.Feedback>
                             </Form.Group>
 
-                            <Form.Group>
+                            <Form.Group className={'mb-2'}>
                                 <Form.Label>Chọn dịch vụ</Form.Label>
                                 {services.map(service => (
                                     <Form.Check
@@ -142,7 +144,7 @@ const BoardingModal = ({ show, handleClose, API, setSuccessMessage }) => {
                                 ))}
                             </Form.Group>
 
-                            <Form.Group controlId="days">
+                            <Form.Group controlId="days" className={'mb-2'}>
                                 <Form.Label>Số ngày muốn ký gửi</Form.Label>
                                 <Form.Control
                                     type="number"

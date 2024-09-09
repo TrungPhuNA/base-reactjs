@@ -89,9 +89,9 @@ const GuestLayout = () => {
                             <>
                                 <Nav.Link onClick={handleBookingShow}>Đặt lịch</Nav.Link>
                                 <Nav.Link onClick={handleBoardingShow}>Ký gửi</Nav.Link>
+                                <Nav.Link onClick={handleConsultationShow}>Tư vấn</Nav.Link> {/* Thêm menu Tư vấn */}
                             </>
                         )}
-                        <Nav.Link onClick={handleConsultationShow}>Tư vấn</Nav.Link> {/* Thêm menu Tư vấn */}
                         <Nav.Link as={Link} to="/">Chia sẻ</Nav.Link>
                     </Nav>
                     <Nav>
@@ -163,12 +163,14 @@ const GuestLayout = () => {
             )}
 
             {/* Modal tư vấn */}
-            <ConsultationModal
-                show={showConsultation}
-                handleClose={handleConsultationClose}
-                API={API}
-                setSuccessMessage={setSuccessMessage}
-            />
+            {isAuthenticated && (
+                <ConsultationModal
+                    show={showConsultation}
+                    handleClose={handleConsultationClose}
+                    API={API}
+                    setSuccessMessage={setSuccessMessage}
+                />
+            )}
         </>
     );
 };

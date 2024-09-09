@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import apiConsultationsService from "../../api/apiConsultationsService";
+import toastr from "toastr";
 
 const ConsultationModal = ({ show, handleClose, API, setSuccessMessage }) => {
     const [consultationType, setConsultationType] = useState('health');
@@ -16,9 +17,10 @@ const ConsultationModal = ({ show, handleClose, API, setSuccessMessage }) => {
 
             // Gửi dữ liệu đến API
             const response = await apiConsultationsService.add(data);
-            setSuccessMessage('Your consultation request has been submitted successfully.');
+            toastr.success('Đăng ký tư vấn thành công!', 'Success');
             handleClose();
         } catch (error) {
+            toastr.error('Có lỗi xẩy ra, xin vui lòng thử lại', 'Error');
             console.error('Error submitting consultation:', error);
         }
     };

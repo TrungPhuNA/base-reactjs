@@ -4,6 +4,7 @@ import { Formik } from "formik";
 import * as Yup from 'yup';
 import axios from 'axios';
 import appointmentService from "../../api/appointmentService";
+import toastr from 'toastr';
 
 const BookingModal = ({ show, handleClose, API, setSuccessMessage }) => {
     const [services, setServices] = useState([]);
@@ -22,11 +23,12 @@ const BookingModal = ({ show, handleClose, API, setSuccessMessage }) => {
     const handleBookingSubmit = async (values, { setSubmitting, resetForm }) => {
         try {
             const response = await appointmentService.add(values);
-            setSuccessMessage('Đặt lịch thành công!');
             handleClose();
             resetForm();
+            toastr.success('Đặt lịch thành công!', 'Success');
         } catch (error) {
             console.error("There was an error booking the appointment!", error);
+            toastr.error('Có lỗi xẩy ra, xin vui lòng thử lại', 'Error');
         } finally {
             setSubmitting(false);
         }
@@ -68,7 +70,7 @@ const BookingModal = ({ show, handleClose, API, setSuccessMessage }) => {
                           isSubmitting,
                       }) => (
                         <Form onSubmit={handleSubmit}>
-                            <Form.Group controlId="service">
+                            <Form.Group controlId="service" className={'mb-2'}>
                                 <Form.Label>Chọn dịch vụ</Form.Label>
                                 <Form.Control
                                     as="select"
@@ -88,7 +90,7 @@ const BookingModal = ({ show, handleClose, API, setSuccessMessage }) => {
                                 </Form.Control.Feedback>
                             </Form.Group>
 
-                            <Form.Group controlId="date">
+                            <Form.Group controlId="date" className={'mb-2'}>
                                 <Form.Label>Chọn ngày khám</Form.Label>
                                 <Form.Control
                                     type="date"
@@ -103,7 +105,7 @@ const BookingModal = ({ show, handleClose, API, setSuccessMessage }) => {
                                 </Form.Control.Feedback>
                             </Form.Group>
 
-                            <Form.Group controlId="isHomeVisit">
+                            <Form.Group controlId="isHomeVisit" className={'mb-2'}>
                                 <Form.Check
                                     type="checkbox"
                                     name="isHomeVisit"
@@ -117,7 +119,7 @@ const BookingModal = ({ show, handleClose, API, setSuccessMessage }) => {
                             </Form.Group>
 
                             {values.isHomeVisit && (
-                                <Form.Group controlId="address">
+                                <Form.Group controlId="address" className={'mb-2'}>
                                     <Form.Label>Địa chỉ</Form.Label>
                                     <Form.Control
                                         type="text"
