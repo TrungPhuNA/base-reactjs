@@ -79,7 +79,7 @@ const PromotionFormModal = ({
                                         {uploading ? (
                                             <Spinner animation="border" variant="primary" />
                                         ) : (
-                                            <img src={imagePreview || "https://via.placeholder.com/150"} alt="Promotion" className="promotion-img" />
+                                            <img src={imagePreview || "https://via.placeholder.com/150"} alt="Promotion" className="promotion-img" style={{ width: '150px', height: '150px', borderRadius:'10px'}} />
                                         )}
                                         <Formik
                                             initialValues={{
@@ -121,6 +121,8 @@ const PromotionFormModal = ({
                                     }}
                                     validationSchema={validationSchema}
                                     onSubmit={(values, { setSubmitting }) => {
+                                        // Thêm console.log để kiểm tra giá trị trước khi submit
+                                        console.log("Submitting values: ", values);
                                         handleAddEditPromotion(values);
                                         setSubmitting(false);
                                     }}
@@ -263,7 +265,7 @@ const PromotionFormModal = ({
                                                         </Form.Control.Feedback>
                                                     </Form.Group>
                                                 </Col>
-                                                <Col xl={6} lg={6} md={6} sm={6} xs={12}>
+                                                <Col xl={12} lg={12} md={12} sm={12} xs={12} className={'mt-2'}>
                                                     <Form.Group controlId="isActive">
                                                         <Form.Check
                                                             type="checkbox"

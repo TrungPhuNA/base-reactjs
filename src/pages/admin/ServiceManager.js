@@ -60,7 +60,8 @@ const ServiceManager = () => {
     const handleAddEditService = async (values) => {
         const serviceData = {
             ...values,
-            price: parseInt(values.price.replace(/\./g, ''), 10),
+            price: parseInt((values.price.toString()).replace(/\./g, ''), 10)
+            // price: parseInt(values.price.replace(/\./g, ''), 10),
         };
         try {
             if (editingService) {

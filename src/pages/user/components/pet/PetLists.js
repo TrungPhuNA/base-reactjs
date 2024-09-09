@@ -1,6 +1,6 @@
 import React from 'react';
-import { Table, Dropdown, ButtonGroup, Image } from 'react-bootstrap';
-import { FaListUl } from "react-icons/fa";
+import {Table, Dropdown, ButtonGroup, Image, Button} from 'react-bootstrap';
+import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 
 const PetTable = ({ pets, defaultImage, formatCurrency, openPetModal, setPetToDelete, setShowDeleteModal }) => {
     return (
@@ -35,19 +35,15 @@ const PetTable = ({ pets, defaultImage, formatCurrency, openPetModal, setPetToDe
                     <td style={{ verticalAlign: 'middle' }}>{pet.type}</td>
                     <td style={{ verticalAlign: 'middle' }}>{formatCurrency(pet.price || 0)}</td>
                     <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                        <Dropdown as={ButtonGroup}>
-                            <Dropdown.Toggle variant="link" id="dropdown-basic">
-                                <FaListUl />
-                            </Dropdown.Toggle>
-
-                            <Dropdown.Menu>
-                                <Dropdown.Item onClick={() => openPetModal(pet)}>Edit</Dropdown.Item>
-                                <Dropdown.Item onClick={() => {
-                                    setPetToDelete(pet);
-                                    setShowDeleteModal(true);
-                                }}>Delete</Dropdown.Item>
-                            </Dropdown.Menu>
-                        </Dropdown>
+                        <Button onClick={() => openPetModal(pet)} className={'btn btn-sm btn-primary'}>
+                            <FaEdit className="" /> Edit
+                        </Button>
+                        <Button onClick={() => {
+                            setPetToDelete(pet);
+                            setShowDeleteModal(true);
+                        }} className={'btn btn-sm btn-danger ms-2'}>
+                            <FaTrashAlt className="" /> Delete
+                        </Button>
                     </td>
                 </tr>
             ))}

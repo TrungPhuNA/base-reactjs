@@ -52,8 +52,15 @@ const UserLayout = ({ isAuthenticated, user, onLogout }) => {
             <Container>
                 <Outlet />
             </Container>
-            <footer className="text-center mt-4">
-                <p>User Footer</p>
+            <footer className="admin-footer text-center mt-4">
+                <div className="footer-content">
+                    <p>&copy; {new Date().getFullYear()} Company Name. All rights reserved.</p>
+                    <div className="footer-links">
+                        <a href="/help">Help</a> |
+                        <a href="/privacy-policy">Privacy Policy</a> |
+                        <a href="/terms-of-service">Terms of Service</a>
+                    </div>
+                </div>
             </footer>
         </>
     );

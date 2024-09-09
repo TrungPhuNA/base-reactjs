@@ -102,8 +102,8 @@ const PetManager = () => {
 
     const handleDeletePet = async () => {
         try {
-            await petService.deletePet(petToDelete.id);
-            setPets((prevPets) => prevPets.filter((pet) => pet.id !== petToDelete.id));
+            await petService.deletePet(petToDelete._id);
+            setPets((prevPets) => prevPets.filter((pet) => pet._id !== petToDelete._id));
             setShowDeleteModal(false);
         } catch (error) {
             console.error("Error deleting pet:", error);
@@ -113,7 +113,7 @@ const PetManager = () => {
     const openPetModal = (pet = null) => {
         setEditingPet(pet);
         setShowPetModal(true);
-        setPetImage(pet?.image || null);
+        setPetImage(pet?.avatar || null);
         setDescription(pet?.description || '');
     };
 
@@ -137,7 +137,7 @@ const PetManager = () => {
     };
 
     return (
-        <Container>
+        <>
             <Row className="gutters mt-3">
                 <Col xl={12}>
                     <Breadcrumbs />
@@ -145,7 +145,7 @@ const PetManager = () => {
             </Row>
             <Row className="gutters">
                 <Col>
-                    <div className="d-flex justify-content-between align-items-center mb-3">
+                    <div className="d-flex justify-content-between">
                         <h2>Manage Pets</h2>
                         <div>
                             <Button variant="secondary" className="me-2" onClick={() => setShowSearchModal(true)}>
@@ -222,7 +222,7 @@ const PetManager = () => {
                 handleSearchSubmit={handleSearchSubmit}
                 handleResetSearch={handleResetSearch}
             />
-        </Container>
+        </>
     );
 };
 

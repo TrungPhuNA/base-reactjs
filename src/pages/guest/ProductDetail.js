@@ -50,11 +50,17 @@ const ProductDetail = () => {
             <Row>
                 <Col md={6}>
                     <Carousel>
-                        {product?.album.map((image, idx) => (
-                            <Carousel.Item key={idx}>
-                                <img className="d-block w-100" src={image} alt={`Product image ${idx + 1}`} />
+                        {(product?.album && product.album.length > 0) ? (
+                            product.album.map((image, idx) => (
+                                <Carousel.Item key={idx}>
+                                    <img className="d-block w-100" src={image} alt={`Product image ${idx + 1}`} />
+                                </Carousel.Item>
+                            ))
+                        ) : (
+                            <Carousel.Item>
+                                <img className="d-block w-100" src={product?.avatar} alt="Product avatar" />
                             </Carousel.Item>
-                        ))}
+                        )}
                     </Carousel>
                 </Col>
                 <Col md={6}>

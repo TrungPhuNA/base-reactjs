@@ -24,6 +24,7 @@ const Login = () => {
         if (isAuthenticated) {
             navigate('/'); // Điều hướng chỉ khi isAuthenticated là true
         }
+        console.info("===========[] ===========[error] : ",error);
     }, [isAuthenticated, navigate]);
 
     const validationSchema = Yup.object({
@@ -69,7 +70,7 @@ const Login = () => {
                             <Col lg={12} xl={8} className="mx-auto">
                                 <h4 className="display-6">Đăng nhập hệ thống</h4>
                                 <p className="text-muted mb-4">Xin vui lòng điền đẩy đủ thông tin</p>
-                                {error && <Alert variant="danger">{error}</Alert>}
+                                {error && error.trim() && <Alert variant="danger">{error}</Alert>}
                                 <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
                                     {({ isSubmitting }) => (
                                         <Form>

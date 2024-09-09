@@ -32,9 +32,19 @@ const ServiceFormModal = ({
                             }}
                             validationSchema={Yup.object({
                                 name: Yup.string().required('Required'),
-                                price: Yup.number().required('Required').positive('Must be positive'),
+                                // price: Yup.number().required('Required').positive('Must be positive'),
+                                price: Yup.string()
+                                    .required('Required')
+                                    .test('isValidPrice', 'Price must be a valid number', value => {
+                                        const cleanValue = value.replace(/\./g, ''); // Loại bỏ dấu chấm
+                                        return !isNaN(parseFloat(cleanValue)) && isFinite(cleanValue); // Kiểm tra nếu là số hợp lệ
+                                    }),
                                 type: Yup.string().required('Required'),
-                                description: Yup.string(),
+                                description: Yup.string()
+                                    .required('Description is required')
+                                    .test('isNotEmpty', 'Description cannot be empty', (value) => {
+                                        return value && value.replace(/<(.|\n)*?>/g, '').trim().length > 0;
+                                    }),
                             })}
                             onSubmit={handleAddEditService}
                         >
@@ -52,15 +62,18 @@ const ServiceFormModal = ({
                                             name="price"
                                             type="text"
                                             className="form-control"
-                                            value={formatCurrencyInput(values.price.toString())}
                                             onChange={(e) => {
                                                 const rawValue = e.target.value.replace(/\./g, "");
-                                                setFieldValue("price", rawValue);
+                                                setFieldValue("price", rawValue ? parseFloat(rawValue) : 0); // Chuyển đổi thành số hoặc gán 0 nếu trống
+                                            }}
+                                            onBlur={(e) => {
+                                                // Khi người dùng rời khỏi trường, format lại giá trị
+                                                const rawValue = e.target.value.replace(/\./g, "");
+                                                setFieldValue("price", formatCurrencyInput(rawValue)); // Sử dụng hàm format khi mất focus
                                             }}
                                         />
                                         <ErrorMessage name="price" component="div" className="text-danger" />
                                     </Form.Group>
-
                                     <Form.Group className="mb-3">
                                         <Form.Label>Type</Form.Label>
                                         <Field as="select" name="type" className="form-control">
@@ -77,6 +90,7 @@ const ServiceFormModal = ({
                                             onChange={(value) => setFieldValue('description', value)}
                                             theme="snow"
                                         />
+                                        <ErrorMessage name="description" component="div" className="text-danger" />
                                     </Form.Group>
 
                                     <Button type="submit" variant="success" disabled={isSubmitting}>

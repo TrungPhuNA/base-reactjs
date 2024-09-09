@@ -22,10 +22,27 @@ const Register = () => {
     const { loading, error } = useSelector((state) => state.auth);
     const navigate = useNavigate();
 
+    // const validationSchema = Yup.object({
+    //     email: Yup.string().email('Invalid email format').required('Required'),
+    //     name: Yup.string().required('Required'),
+    //     password: Yup.string().min(6, 'Password must be at least 6 characters').required('Required'),
+    //     confirmPassword: Yup.string()
+    //         .oneOf([Yup.ref('password'), null], 'Passwords must match')
+    //         .required('Required')
+    // });
     const validationSchema = Yup.object({
-        email: Yup.string().email('Invalid email format').required('Required'),
-        name: Yup.string().required('Required'),
-        password: Yup.string().min(6, 'Password must be at least 6 characters').required('Required'),
+        email: Yup.string()
+            .email('Invalid email format')
+            .required('Required'),
+        name: Yup.string()
+            .matches(/^[a-zA-Z\s]*$/, 'Name cannot contain numbers')  // Regex để kiểm tra không chứa số
+            .required('Required'),
+        password: Yup.string()
+            .min(6, 'Password must be at least 6 characters')
+            .matches(/[a-z]/, 'Password must contain at least one lowercase letter')  // Kiểm tra có ít nhất 1 chữ thường
+            .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')  // Kiểm tra có ít nhất 1 chữ in hoa
+            .matches(/\d/, 'Password must contain at least one number')              // Kiểm tra có ít nhất 1 số
+            .required('Required'),
         confirmPassword: Yup.string()
             .oneOf([Yup.ref('password'), null], 'Passwords must match')
             .required('Required')
@@ -53,7 +70,7 @@ const Register = () => {
                             <Col className="col-lg-12 col-xl-8 mx-auto">
                                 <h4 className="display-6">Đăng ký tài khoản</h4>
                                 <p className="text-muted mb-4">Xin vui lòng điền đẩy đủ thông tin</p>
-                                {error && <Alert variant="danger">{error.message}</Alert>}
+                                {error && error?.message && <Alert variant="danger">{error.message}</Alert>}
                                 <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
                                     {({ isSubmitting }) => (
                                         <Form>
